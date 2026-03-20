@@ -1,0 +1,18 @@
+# Môi trường và API Keys
+.env
+.env.*
+
+# Thư mục lưu trữ dữ liệu của Docker (Tuyệt đối không push)
+db_data/
+chroma_data/
+storage/
+web/
+
+# Thư mục môi trường ảo Python (nếu có)
+venv/
+__pycache__/
+*.pyc
+
+# Rác hệ điều hành
+.DS_Store
+Thumbs.db

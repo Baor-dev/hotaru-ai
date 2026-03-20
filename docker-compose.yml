@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: studydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    # Đã đóng port 5432 ra bên ngoài để bảo mật. Backend vẫn kết nối được qua mạng nội bộ Docker.
+
+  backend:
+    build: ./backend
+    restart: always
+    env_file: ./backend/.env
+    depends_on:
+      - db
+    volumes:
+      # Sửa lại đường dẫn mount cho đúng với thư mục /app trong container
+      - ./storage:/app/storage
+      - ./chroma_data:/app/chroma_db 
+      # Giữ lại public nếu FastAPI của bạn tự serve file tĩnh
+      - ./public:/app/public 
+    # Đã xóa cờ --reload để tiết kiệm CPU/RAM trên môi trường thực tế
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443" # Mở sẵn port HTTPS cho tương lai gắn tên miền
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # Nếu Frontend của bạn là file HTML tĩnh, hãy để Nginx phục vụ nó luôn cho nhẹ Backend
+      - ./web:/usr/share/nginx/html 
+    depends_on:
+      - backend

@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+pydantic
+python-multipart
+passlib[bcrypt]
+PyJWT
+underthesea
+sentence-transformers
+chromadb
+python-docx
+python-dotenv
+PyMuPDF
+pytesseract
+pdf2image
+openai

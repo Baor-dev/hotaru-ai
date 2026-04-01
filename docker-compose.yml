@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: studydb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "8000:8000"
     volumes:
       - ./db_data:/var/lib/postgresql/data
     # Đã đóng port 5432 ra bên ngoài để bảo mật. Backend vẫn kết nối được qua mạng nội bộ Docker.
@@ -19,13 +21,14 @@ services:
     depends_on:
       - db
     volumes:
+      - ./backend:/app
       # Sửa lại đường dẫn mount cho đúng với thư mục /app trong container
       - ./storage:/app/storage
       - ./chroma_data:/app/chroma_db 
       # Giữ lại public nếu FastAPI của bạn tự serve file tĩnh
       - ./public:/app/public 
     # Đã xóa cờ --reload để tiết kiệm CPU/RAM trên môi trường thực tế
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   nginx:
     image: nginx:alpine

@@ -4,6 +4,7 @@ sqlalchemy
 psycopg2-binary
 pydantic
 python-multipart
+bcrypt==4.0.1
 passlib[bcrypt]
 PyJWT
 underthesea
@@ -15,3 +16,7 @@ PyMuPDF
 pytesseract
 pdf2image
 openai
+youtube-transcript-api
+langchain
+langchain-text-splitters
+python-jose[cryptography]

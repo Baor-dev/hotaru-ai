@@ -28,40 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. Tạo dữ liệu mồi (Seed Data) cho MVP test
-@app.on_event("startup")
-def startup_event():
-    db = SessionLocal()
-    try:
-        # Nếu chưa có User 1, tạo mới
-        if not db.query(User).filter(User.id == 1).first():
-            dummy_user = User(id=1, email="bao.cecomtech@example.com", password_hash="hashed_pw")
-            db.add(dummy_user)
-            db.commit()
-            
-        # Nếu chưa có Notebook 1, tạo mới
-        if not db.query(Notebook).filter(Notebook.id == 1).first():
-            dummy_nb = Notebook(id=1, user_id=1, title="Notebook Mặc Định")
-            db.add(dummy_nb)
-            db.commit()
-    except Exception as e:
-        print(f"Lỗi khởi tạo DB: {e}")
-    finally:
-        db.close()
 
 # 2. API ENDPOINTS: Nạp toàn bộ route từ document_controller và chat_controller
 app.include_router(api_router)
-
-# API hỗ trợ hiển thị danh sách mặc định cho file index.html
-@app.get("/notebooks/")
-async def get_notebooks():
-    return JSONResponse({
-        "notebooks": [
-            {"name": "Kiến trúc phần mềm (Software Architecture)"},
-            {"name": "Tài liệu phát triển Odoo & Python"},
-            {"name": "Kiến thức Penetration Testing cơ bản"}
-        ]
-    })
 
 # 3. STATIC FILES: Luôn đặt ở cuối cùng để tránh xung đột route (Catch-all)
 public_dir = "../public"

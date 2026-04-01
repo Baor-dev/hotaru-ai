@@ -10,6 +10,7 @@ class Document(Base):
     notebook_id = Column(Integer, ForeignKey("notebooks.id"))
     filename = Column(String, index=True)
     filetype = Column(String)
+    content = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     notebook = relationship("Notebook", back_populates="documents")

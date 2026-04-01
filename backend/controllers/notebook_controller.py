@@ -70,3 +70,25 @@ async def delete_notebook(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Lỗi hệ thống khi xóa Notebook: {str(e)}")
+
+@router.post("/notebooks/{notebook_id}/rename/") # Hoặc @router.put nếu bạn thích chuẩn RESTful
+async def rename_notebook(
+    notebook_id: int,
+    request: NotebookCreate, # Dùng lại schema NotebookCreate (chỉ cần gửi title)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Tìm Notebook và check user
+    notebook = db.query(Notebook).filter(
+        Notebook.id == notebook_id, 
+        Notebook.user_id == current_user.id
+    ).first()
+    
+    if not notebook:
+        raise HTTPException(status_code=404, detail="Không tìm thấy Notebook hoặc bạn không có quyền sửa.")
+
+    # Cập nhật tên mới
+    notebook.title = request.title.strip()
+    db.commit()
+    
+    return {"message": f"Đã đổi tên Notebook thành '{notebook.title}' thành công!"}
